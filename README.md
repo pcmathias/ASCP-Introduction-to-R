@@ -28,7 +28,7 @@ Please make every effort to arrive 5-10 minutes early to allow time to get settl
 ## Accessing/interacting with the course content
 
 1.  Course content will be pre-loaded in the Posit instance that we will be working with on the day of the workshop. However, instances of Posit Cloud
-2.  The content can be downloaded from this page by clicking on the **Code** button on the top right and selecting the **Download ZIP** option.
+2.  The content can be downloaded from this page by clicking on the **Code** button on the top right and selecting the **Download ZIP** option. The content will be modified up until the time of the workshop so I'd recommend not downloading it until after we've started.
 
 ## Installing RStudio onto your own computer
 
