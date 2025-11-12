@@ -44,15 +44,13 @@ We will be utilizing our own cloud based RStudio instance in the workshop. Howev
 
 The course instructors have previous experience implementing and executing R workshops at a variety of venues. The workshop we are presenting for the ASCP community is in many ways a product of these past experiences. The workshop also integrates content, best practices, and lessons from a variety of educators in the R community. We would like to specifically acknowledge:
 
--   [MSACL Data Science 201](https://github.com/pcmathias/MSACL-intermediate-R-course), a course produced by Patrick Mathias and several collaborators, presented at the Mass Spectrometry: Applications to the Clinical Lab meeting.
+-   Steve Master and Dan Holmes's various iterations of introductory R courses at the Mass Spectrometry and Advances in the Clinical Lab (MSACL) conferences
+-   Stephan Kadauke MD PhD, Amrom Obstfeld, MD PhD, Joseph Rudolph MD, and Dan Herman MD PhD who helped develop the content for previous versions of this course at [Association for Diagnostics and Laboratory Medicine](https://github.com/pcmathias/AACC-Intro-to-R-2023) and [Pathology Informatics Summit](https://github.com/amromeo/api_r2023)
 -   Stephan Kadauke's R workshop for Pathology trainees and faculty, developed at the Massachusetts General Hospital and the Hospital of the University of Pennsylvania
--   Steve Master and Dan Holmes's AACC Introduction to R Workshop
 -   [Data Science in the Tidyverse](https://github.com/AmeliaMN/data-science-in-tidyverse), a RStudio course with materials posted online
 -   [R for Data Science](http://r4ds.had.co.nz/index.html), the online textbook by Garrett Grolemund and Hadley Wickham, is invaluable in navigating the tidyverse and learning R in general
--   Blog posts and documentation by [Jenny Bryan](https://github.com/jennybc) helped steer the project content and as well as some discussion about packages
 -   Amy Willis' [Advanced R Course repository](https://github.com/adw96/biostat561) as a resource for understanding content in a longer, advanced R course
 -   Keith Baggerly and Karl Broman's [Reproducible Research](https://github.com/kabagg/sisbid_2018_rr) module at the [Summer Institute in Statistics for Big Data](https://www.biostat.washington.edu/suminst/sisbid) - a big thank you to Keith Baggerly for all of his input and guidance!
 -   Greg Wilson's [Teaching Tech Together](http://teachtogether.tech/en/), which offers practical advice about teaching programming.
 -   Claus Wilke's [Fundamentals of Data Visualization](https://serialmentor.com/dataviz/), a compendium of Do's and Don'ts of data visualization.
 -   Method validation and some other content has been borrowed from the [basic R course at AACC](https://github.com/pcmathias/AACC-Introduction-to-R)
--   Stephan Kadauke MD PhD, Amrom Obstfeld, MD PhD, Joseph Rudolph MD, and Dan Herman MD PhD who helped develop the content.
