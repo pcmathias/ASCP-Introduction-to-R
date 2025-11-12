@@ -17,7 +17,7 @@ For the best experience, please have the following ready before the workshop beg
 
 -   Sign up for an OpenAI account at https://chatgpt.com/ if you do not already have an account. Click the **Sign up for free** button on the top right and use any of the options to set up an account.
 
--   We will use Posit (a.k.a. RStudio) Cloud as our training environment. Please sign up for a free account at https://Posit.cloud/. Navigate to the **Sign Up** button on the top right and click **Learn More** under the Cloud Free version. Then click the **Sign Up** button to create an account. Feel free to use an existing Google acount if you already have one.
+-   We will use Posit (a.k.a. RStudio) Cloud as our training environment. Please sign up for a free account at https://Posit.cloud/. Navigate to the **Sign Up** button on the top right and click **Learn More** under the Cloud Free version. Then click the **Sign Up** button to create an account. Feel free to use an existing Google account if you already have one.
 
 -   Please complete the [pre-course survey](https://forms.gle/8Hs5mtjrf33ZCQS8A).
 
