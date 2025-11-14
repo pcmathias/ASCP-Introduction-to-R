@@ -1,5 +1,5 @@
 ---
-title: "Exercises for 04 - Transform"
+title: "Exercises for 03 - Transform"
 format: html
 editor: visual
 ---
@@ -8,7 +8,7 @@ editor: visual
 
 Whenever we start a notebook-style document, we often know ahead of time about specific packages we will use and data sets we would like to import. You can use your first code chunk as a "setup" chunk to take care of the housekeeping up front and make your analysis a little easier to follow.
 
-Go ahead an run this chunk below to load the tidyverse package we will need as well as to load our chemistry data set.
+**Go ahead an run this chunk below to load the tidyverse package we will need as well as to load our chemistry data set.**
 
 ```{r setup}
 ## remove all user defined objects in your workspace
@@ -16,16 +16,17 @@ rm(list=ls())
 
 library(tidyverse)  # Provides functions used throughout this session
 
-chem <- read_csv("data/chem_data.csv", 
-    col_types = cols(gender = col_factor(NULL),
-                     pregnancy_status_at_exam = col_factor(NULL),
-                     collect_dt = col_datetime(format = "%Y/%m/%d %H:%M:%S"), 
-                     receive_dt = col_datetime(format = "%Y/%m/%d %H:%M:%S"), 
-                     verify_dt = col_datetime(format = "%Y/%m/%d %H:%M:%S"), 
-                     pat_type = col_factor(NULL),
-                     payor_groups = col_factor(NULL),
-                     test = col_factor(NULL),
-                     units = col_factor(NULL))) # Read in data - note we determined data types up front
+chem <- read_csv("data/chem_data.csv")
+# chem <- read_csv("data/chem_data.csv", 
+#     col_types = cols(gender = col_factor(NULL),
+#                      pregnancy_status_at_exam = col_factor(NULL),
+#                      collect_dt = col_datetime(format = "%Y/%m/%d %H:%M:%S"), 
+#                      receive_dt = col_datetime(format = "%Y/%m/%d %H:%M:%S"), 
+#                      verify_dt = col_datetime(format = "%Y/%m/%d %H:%M:%S"), 
+#                      pat_type = col_factor(NULL),
+#                      payor_groups = col_factor(NULL),
+#                      test = col_factor(NULL),
+#                      units = col_factor(NULL))) # Read in data - note we determined data types up front
 ```
 
 To start from a clean slate, we ran a function to clear our environment. It's a good practice to clear your environment with each analysis session and then re-run your analysis sequentially. If you run code chunks out of sequence you may produce output that doesn't match when the code is run sequentially and therefore is less reproducible.
@@ -40,68 +41,170 @@ How can you confirm that you have successfully loaded the data file into Rstudio
 
 **Stop Here**
 
-## Creating a Subset Using `filter()`
+## Converting Data Types
 
-Recall that we can select a subset of observations for a single patient using `filter()`:
+Functions that import data in R make assumptions of how the data needs to be represented, typically based on scanning a limited number of rows and "guessing" what data type will fit best. At high level, R is often looking for numbers vs. characters and will default to defining a variable as a character. The data type for each variable impacts how R interprets and displays the values in your data frame. Let's take a look at the data set we imported using the `summary()` function, which is a quick mechanism to generate simple statistical summaries. **Run the code chunk below.**
 
 ```{r}
-filter(chem, mrn == 111900)
+summary(chem)
 ```
 
-Multiple criteria can be applied to a data set by adding them as arguments to the `filter()` function - logically, this applies an *AND* to each criteria (as opposed to an *OR*:
+You'll notice that `summary()` produces a nice output for the variables with a numeric data type. But there are a large number of variables that have been imported as characters and we aren't able to glean useful information from.
+
+You can imagine how this behavior of converting all variables where characters (i.e. strings) make up some observations might be problematic if we have a variable for which most of the observations are numbers but occasionally the field is text instead. As a concrete example, most laboratory results for an analyte like sodium will be numeric but if we cancel and credit the test there may be a comment entered in place of a numeric value. Most import functions will import that variable as a character rather than a numeric data type.
+
+It would be helpful to instruct R specifically how which data type each variable should be mapped to. One way to do this is using a function called `mutate()` which can do one of 2 things: 1) modify an existing column based on a calculation or 2) create a new column based on a calculation. The key behavior is that we can apply a calculation (i.e. use some logic) to update or create new values within our data frame.
+
+Let's start with using `mutate()` to update an existing column within the data frame. We are going to create a new data frame *chem_data* that is almost identical to our original *chem* data frame we imported with one notable difference. The new data frame *chem_data* gets the output from the `mutate()` function, which has the original *chem* data frame as the first argument and the second argument includes:
+
+-   the name of a new or existing column to update - *gender*
+
+-   an assignment operator *=*
+
+-   a function or calculation - *`as.factor(gender)`*
+
+**Run** **the code chunk below and inspect the output.**
 
 ```{r}
-filter(chem, age >= 50, gender == "Female")
+chem_data <- mutate(chem, gender = as.factor(gender))
+summary(chem_data)
 ```
 
-You want to confirm a reference interval for women over 50 for alkaline phophatase. Let's start by creating a subset of the data that only contains alkaline phosphatase observations and storing the output in a data frame named *alk_phos*. Replace the placeholders in the code below.
+**Compare the output of the `summary()` function here with what you ran above in the first code chunk of this section (`summary(chem)`). What is different?**
+
+The `as.factor()` function converts the data type for the *gender* variable into a factor, or categorical variable, to support some operations such as rapid tabulation.
+
+Note that we created a new data frame rather than overwrite the contents of the original data frame. Whenever you are making significant modifications to your raw data, it is a best practice to maintain visibility into the changes by preserving your raw data even when you are working within R.
+
+Which other variables make sense to be factors rather than strings? **In the code chunk below, fill in the blanks to convert one of the other variables in the *chem* data frame into a factor.** Note that the `mutate()` function will allow you to modify or create multiple columns at once, as multiple arguments to the function.
 
 ```{r}
-alk_phos <- filter(...., ..........)
+chem_data <- mutate(chem, 
+                    gender = as.factor(gender),
+                    ________ = as.factor(________))
+summary(chem_data)
 ```
 
-Find every alkaline phosphatase test for female patients aged 50 and over. The column in which age is found is named *age*, gender is found in *gender* and test is in *test*. Recall that multiple conditions be included as arguments to `filter()`, and all of them will be applied (e.g. `filter(data_set, variable1 == "value", variable2 >= value, variable3 == "value")`). Assign the new data frame to the object *alk_phos_f*. (Note: you can start with the original *chem* dataframe that you imported, or you can apply logical criteria to the *alk_phos* dataframe you created in the step above. You should get the same output either way.)
+The output for the variables we converted to factors is now much more descriptive. To further improve our ability to work with the data, we will also want to convert the dates and times associated with test collection (*collect_dt*), receipt in the lab (*receive_dt*), and resulting (*verify_dt*) into formal timestamps that R can recognize. Note that all three of these were read into R as strings (chr data type). To convert *collect_dt* into a datetime data type, we can use a similar approach to converting strings to factors, but use the `as.POSIXct()` function within the `mutate()` function.
 
 ```{r}
-
+chem_data <- mutate(chem, 
+                    gender = as.factor(gender),
+                    collect_dt = as.POSIXct(collect_dt))
+summary(chem_data)
 ```
 
-Now we would only like to include outpatients from the object you just created. Find all of the alkaline phosphtase testing in female patients 50 and over where the patient type (*pat_type*) is equal to "outpatient". Assign the new data frame to the object *outpt_alk_phos_f*.
+What changed in the summary?
+
+Note that R was able to determine how the string with the *collect_dt* was formatted. With some unique datetime formats, R may not be able to automatically parse this, in which case the format will need to be explicitly specified to R. More info can be found in the documentation for the `as.POSIXct()` function.
+
+**Fill in the blanks in the code chunk below to rebuild the object *chem_data* with the most appropriate data types for each of the variables.**
 
 ```{r}
-
-```
-
-We may have some data anomalies in the data set. Find all of the biochemistry testing where the patient class (column *pat_type*) is not entered. In these cases the value will be NA. NA stands for "not available". It is the way that R codes missing values. \[Hint: See slide titled "Logical Tests"\]
-
-```{r}
-
+chem_data <- mutate(chem, 
+                    gender = as.factor(gender),
+                    pregnancy_status_at_exam = as.factor(pregnancy_status_at_exam),
+                    collect_dt = as.POSIXct(collect_dt),
+                    __________ = as.POSIXct(__________),
+                    __________ = as.POSIXct(__________),
+                    pat_type = as.factor(pat_type),
+                    __________ = as.factor(__________),
+                    test = as.factor(__________)
+                    )
+summary(chem_data)
 ```
 
 **Stop Here**
 
 ## Creating a New Column
 
-The `mutate()` function is used to add one or more variables to a dataframe, based on calculations applied to other columns. For example, we can create a new variable *in_lab_tat* (tat = turnaround time) based on the difference between the *verify_dt* (when the result from test was verified and released) and the *receive_dt* (when the sample was received in the lab).
+**Run the code chunk below to set up for subsequent code chunks.**
 
 ```{r}
-chem <- mutate(chem, in_lab_tat = verify_dt - receive_dt)
-head(chem) # function to show the first few observations
+chem_data <- mutate(chem, 
+                    gender = as.factor(gender),
+                    pregnancy_status_at_exam = as.factor(pregnancy_status_at_exam),
+                    collect_dt = as.POSIXct(collect_dt),
+                    receive_dt = as.POSIXct(receive_dt),
+                    verify_dt = as.POSIXct(verify_dt),
+                    pat_type = as.factor(pat_type),
+                    payor_groups = as.factor(payor_groups),
+                    test = as.factor(test)
+                    )
+summary(chem_data)
+```
+
+In this example the `mutate()` function is used to add one or more variables to a dataframe, based on calculations applied to other columns. For example, we can create a new variable *in_lab_tat* (tat = turnaround time) based on the difference between the *verify_dt* (when the result from test was verified and released) and the *receive_dt* (when the sample was received in the lab). **Run the code chunk below and find the *in_lab_tat* variable. (Use the right arrow within the output table to navigate the data.)** Note that the `head()` function is a simple function to view the first rows of a data frame.
+
+```{r}
+chem_data <- mutate(chem_data, in_lab_tat = verify_dt - receive_dt)
+head(chem_data) # function to show the first few observations
 # click the right arrow until you get to the rightmost variables to see the new variable
 ```
 
-Use the code chunk below to create a new variable *total_tat* in your *chem* dataframe that captures the entire turnaround time from *collect_dt* to *verify_dt*. Inspect the dataframe afterwards and confirm that your new variable was created. Is there anything different about this turnaround time columns compared to the others?
+**Use the code chunk below to fill in the blanks create a new variable *total_tat* in your *chem* dataframe that captures the entire turnaround time from *collect_dt* to *verify_dt*. Inspect the dataframe afterwards and confirm that your new variable was created. Is there anything different about this turnaround time column compared to the other one we just created?**
 
 ```{r}
-
-View(chem)
+chem_data <- mutate(chem_data, total_tat = ________ - _________)
+View(chem_data)
 ```
 
-When you subtract two timestamps, R preserves the fact that the operation was a difference in times and stores the result as a data type called a *difftime*. This can be helpful from the perspective that the output is human readable and understandable, but we may also want a plain number to perform calculations on or to plot. We can apply a function `as.numeric()` to convert a value that R recognizes as parseable into a number. In this case, we also need instruct R on which units to use when it converts the values to a number. We can apply a `units = "min"` argument to instruct R that we want the numeric output to capture the time differences in minutes: `as.numeric(variable, units = "mins")`. In the code chunk below create a new variable *total_tat_min* to represent the total turnaround times in minutes as a numeric variable. Confirm the creation and format of your new variable when you are done.
+When you subtract two timestamps, R preserves the fact that the operation was a difference in times and stores the result as a data type called a *difftime*. This can be helpful from the perspective that the output is human readable and understandable, but we may also want a plain number to perform calculations on or to plot. We can apply a function `as.numeric()` to convert a value that R recognizes as parseable into a number. In this case, we also need instruct R on which units to use when it converts the values to a number. We can apply a `units = "min"` argument to instruct R that we want the numeric output to capture the time differences in minutes: `as.numeric(variable, units = "mins")`. **Fill in the blank in the code chunk below create a new variable *total_tat_min* to represent the total turnaround times in minutes as a numeric variable. Run the code chunk and confirm the creation and format of your new variable when you are done.**
 
 ```{r}
+chem_data <- mutate(chem_data, total_tat = as.numeric(verify_dt - _________, 
+                                                      units = "mins"))
+View(chem_data)
+```
 
-View(chem)
+**Stop Here**
+
+## Creating a Subset Using `filter()`
+
+The `filter()` function allows us to use logical criteria to return a specific set of observations (rows) from our data frame.
+
+**Run the code chunk below to select a subset of observations for a single patient:**
+
+```{r}
+filter(chem_data, mrn == 111900)
+```
+
+Multiple criteria can be applied to a data set by adding them as arguments to the `filter()` function - logically, this applies an *AND* to each criteria (as opposed to an *OR*). Run the code chunk below and inspect the output in the data viewer. Recall that if you just run the function by itself the output may be displayed but it will not be stored anywhere. We have created a new data frame *chem_data_females_over50* to store the output.
+
+```{r}
+chem_data_females_over50 <- filter(chem_data, age >= 50, gender == "Female")
+View(chem_data_females_over50)
+```
+
+You want to confirm a reference interval for women over 50 for alkaline phophatase. Let's start by creating a subset of the data that only contains alkaline phosphatase observations and storing the output in a data frame named *alk_phos*. **Fill in the blank in the code below to specifically filter these "alkaline_phosphatase" observations (captured in the *test* variable).**
+
+```{r}
+alk_phos <- filter(chem_data, test == "__________________")
+View(alk_phos)
+```
+
+**Fill in the blanks to find every alkaline phosphatase test for female patients aged 50 and over.** The column in which age is found is named *age*, gender is found in *gender* and test is in *test*. Recall that multiple conditions be included as arguments to `filter()`, and all of them will be applied (e.g. `filter(data_set, variable1 == "value", variable2 >= value, variable3 == "value")`). Note that R allows for multiple arguments to a function to be split across multiple lines - this can make more complex code easier to read. The data is assigned to the new data frame *alk_phos_f*.
+
+```{r}
+alk_phos_f <- filter(chem_data, 
+                     test == "alkaline_phosphatase", 
+                     gender == "________", 
+                     ________)
+View(alk_phos)
+```
+
+Now we would only like to include outpatients from the data frame you just created. **Fill in the blnaks to find all of the alkaline phosphtase testing in female patients 50 and over where the patient type (*pat_type*) is equal to "outpatient". Assign the new data frame to the object *outpt_alk_phos_f*.**
+
+```{r}
+_________________ <- filter(__________, _______ == "__________")
+View(outpt_alk_phos_f)
+```
+
+We may have some data anomalies in the data set. **Run the code below to find all of the biochemistry testing where the patient class (column *pat_type*) is not entered.** In these cases the value will be NA. NA stands for "not available". It is the way that R codes missing values. \[Hint: See slide titled "Logical Tests"\]
+
+```{r}
+chem_data_mising_pat_type <- filter(chem_data, is.na(pat_type))
+View(chem_data_mising_pat_type)
 ```
 
 **Stop Here**
